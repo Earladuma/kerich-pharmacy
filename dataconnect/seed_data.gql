@@ -1,0 +1,136 @@
+mutation SeedData @transaction @auth(level: USER, insecureReason: "This operation is for seeding data and should only be run by authenticated users.") {
+  user_insertMany(data: [
+    {
+      id: "b2f0a1d4-e8c7-4b9a-9e3f-6a1b2c3d4e5f",
+      email: "patient1@example.com",
+      passwordHash: "hashedpassword1",
+      role: "Patient",
+      createdAt: "2023-01-01T10:00:00Z",
+      firstName: "Alice",
+      lastName: "Smith",
+      phoneNumber: "111-222-3333",
+      address: "123 Main St"
+    },
+    {
+      id: "c7e9f0a1-d4b2-4c5e-8f1a-0b2c3d4e5f6a",
+      email: "patient2@example.com",
+      passwordHash: "hashedpassword2",
+      role: "Patient",
+      createdAt: "2023-01-02T11:00:00Z",
+      firstName: "Bob",
+      lastName: "Johnson",
+      phoneNumber: "444-555-6666",
+      address: "456 Oak Ave"
+    },
+    {
+      id: "a1c3e5f7-b9d0-4e2a-8c7b-1d3e5f7a9b0c",
+      email: "doctor1@example.com",
+      passwordHash: "hashedpassword3",
+      role: "Doctor",
+      createdAt: "2023-01-03T12:00:00Z",
+      firstName: "Dr. Carol",
+      lastName: "Davis",
+      phoneNumber: "777-888-9999",
+      address: "789 Pine Ln"
+    }
+  ])
+  medication_insertMany(data: [
+    {
+      id: "f8e7d6c5-b4a3-4f2e-1d0c-9b8a7f6e5d4c",
+      name: "Amoxicillin",
+      dosage: "250mg",
+      form: "Capsule",
+      manufacturer: "Generic Pharma",
+      createdAt: "2023-01-01T10:05:00Z",
+      description: "Antibiotic for bacterial infections.",
+      sideEffects: "Nausea, diarrhea, rash.",
+      interactions: "Warfarin, birth control pills.",
+      imageUrl: "https://example.com/amoxicillin.jpg"
+    },
+    {
+      id: "1a2b3c4d-5e6f-7a8b-9c0d-1e2f3a4b5c6d",
+      name: "Ibuprofen",
+      dosage: "200mg",
+      form: "Tablet",
+      manufacturer: "PainRelief Inc.",
+      createdAt: "2023-01-02T11:10:00Z",
+      description: "Pain reliever and anti-inflammatory.",
+      sideEffects: "Stomach upset, heartburn.",
+      interactions: "Blood thinners, diuretics.",
+      imageUrl: "https://example.com/ibuprofen.jpg"
+    }
+  ])
+  prescription_insertMany(data: [
+    {
+      id: "p1q2r3s4-t5u6-v7w8-x9y0-z1a2b3c4d5e6",
+      patientId: "b2f0a1d4-e8c7-4b9a-9e3f-6a1b2c3d4e5f",
+      medicationId: "f8e7d6c5-b4a3-4f2e-1d0c-9b8a7f6e5d4c",
+      prescriptionDate: "2023-01-04",
+      dosageInstructions: "Take one capsule three times daily for 7 days.",
+      quantityPrescribed: 21,
+      refillsRemaining: 0,
+      status: "Active",
+      createdAt: "2023-01-04T09:00:00Z",
+      prescriberName: "Dr. Carol Davis",
+      notes: "Patient has bacterial infection."
+    },
+    {
+      id: "q6r5s4t3-u2v1-w0x9-y8z7-a6b5c4d3e2f1",
+      patientId: "c7e9f0a1-d4b2-4c5e-8f1a-0b2c3d4e5f6a",
+      medicationId: "1a2b3c4d-5e6f-7a8b-9c0d-1e2f3a4b5c6d",
+      prescriptionDate: "2023-01-05",
+      dosageInstructions: "Take one tablet every 4-6 hours as needed for pain.",
+      quantityPrescribed: 30,
+      refillsRemaining: 2,
+      status: "Active",
+      createdAt: "2023-01-05T10:00:00Z",
+      prescriberName: "Dr. Carol Davis",
+      notes: "Patient reports back pain."
+    }
+  ])
+  inventory_insertMany(data: [
+    {
+      id: "i1j2k3l4-m5n6-o7p8-q9r0-s1t2u3v4w5x6",
+      medicationId: "f8e7d6c5-b4a3-4f2e-1d0c-9b8a7f6e5d4c",
+      quantity: 100,
+      expirationDate: "2024-12-31",
+      price: 15.99,
+      createdAt: "2023-01-01T10:15:00Z",
+      updatedAt: "2023-01-01T10:15:00Z",
+      batchNumber: "AMX-BATCH-001"
+    },
+    {
+      id: "y7z8a9b0-c1d2-e3f4-g5h6-i7j8k9l0m1n2",
+      medicationId: "1a2b3c4d-5e6f-7a8b-9c0d-1e2f3a4b5c6d",
+      quantity: 200,
+      expirationDate: "2025-06-30",
+      price: 8.50,
+      createdAt: "2023-01-02T11:20:00Z",
+      updatedAt: "2023-01-02T11:20:00Z",
+      batchNumber: "IBU-BATCH-002"
+    }
+  ])
+  medicationLog_insertMany(data: [
+    {
+      id: "log1-entry-abc-123",
+      prescriptionId: "p1q2r3s4-t5u6-v7w8-x9y0-z1a2b3c4d5e6",
+      takenAt: "2023-01-04T12:00:00Z",
+      createdAt: "2023-01-04T12:05:00Z",
+      notes: "First dose taken as instructed."
+    },
+    {
+      id: "log2-entry-def-456",
+      prescriptionId: "p1q2r3s4-t5u6-v7w8-x9y0-z1a2b3c4d5e6",
+      takenAt: "2023-01-04T18:00:00Z",
+      createdAt: "2023-01-04T18:05:00Z",
+      notes: "Second dose taken. Feeling slightly better."
+    },
+    {
+      id: "log3-entry-ghi-789",
+      prescriptionId: "q6r5s4t3-u2v1-w0x9-y8z7-a6b5c4d3e2f1",
+      takenAt: "2023-01-05T14:00:00Z",
+      createdAt: "2023-01-05T14:05:00Z",
+      notes: "Took Ibuprofen for back pain. Mild relief."
+    }
+  ])
+}

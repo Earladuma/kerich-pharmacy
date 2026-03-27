@@ -1,0 +1,66 @@
+query ListAllMedications @auth(level: PUBLIC, insecureReason: "This operation is safe to expose to the public as it only lists general medication information.") {
+  medications {
+    id
+    name
+    dosage
+    form
+    manufacturer
+    description
+    imageUrl
+  }
+}
+
+query GetMyPrescriptions($patientId: UUID!) @auth(level: USER) {
+  prescriptions(where: { patient: { id_expr: "auth.uid" } }) {
+    id
+    prescriptionDate
+    dosageInstructions
+    quantityPrescribed
+    refillsRemaining
+    status
+    prescriberName
+    notes
+    medication {
+      id
+      name
+      dosage
+      form
+    }
+  }
+}
+
+mutation AddNewMedication(
+  $name: String!
+  $dosage: String!
+  $form: String!
+  $manufacturer: String!
+  $description: String
+  $sideEffects: String
+  $interactions: String
+  $imageUrl: String
+) @auth(level: USER, insecureReason: "This operation allows any logged-in user to add medication. More restrictive roles might be needed in production.") {
+  medication_insert(
+    data: {
+      name: $name
+      dosage: $dosage
+      form: $form
+      manufacturer: $manufacturer
+      description: $description
+      sideEffects: $sideEffects
+      interactions: $interactions
+      imageUrl: $imageUrl
+      createdAt_expr: "request.time"
+    }
+  )
+}
+
+mutation LogMedicationTaken($prescriptionId: UUID!, $takenAt: Timestamp!, $notes: String) @auth(level: USER, insecureReason: "This operation allows any logged-in user to log medication, assuming they have access to the prescription ID. More restrictive checks linking the prescription to the user might be needed.") {
+  medicationLog_insert(
+    data: {
+      prescription: { id: $prescriptionId }
+      takenAt: $takenAt
+      notes: $notes
+      createdAt_expr: "request.time"
+    }
+  )
+}

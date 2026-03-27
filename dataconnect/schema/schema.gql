@@ -1,0 +1,52 @@
+type User @table {
+  email: String!
+  passwordHash: String!
+  role: String!
+  createdAt: Timestamp!
+  firstName: String
+  lastName: String
+  phoneNumber: String
+  address: String
+}
+
+type Medication @table {
+  name: String!
+  dosage: String!
+  form: String!
+  manufacturer: String!
+  createdAt: Timestamp!
+  description: String
+  sideEffects: String
+  interactions: String
+  imageUrl: String
+}
+
+type Inventory @table {
+  medication: Medication!
+  quantity: Int!
+  expirationDate: Date!
+  price: Float!
+  createdAt: Timestamp!
+  updatedAt: Timestamp!
+  batchNumber: String
+}
+
+type Prescription @table {
+  patient: User!
+  medication: Medication!
+  prescriptionDate: Date!
+  dosageInstructions: String!
+  quantityPrescribed: Int!
+  refillsRemaining: Int!
+  status: String!
+  createdAt: Timestamp!
+  prescriberName: String
+  notes: String
+}
+
+type MedicationLog @table {
+  prescription: Prescription!
+  takenAt: Timestamp!
+  createdAt: Timestamp!
+  notes: String
+}

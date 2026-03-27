@@ -1,0 +1,1188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kerich Pharmacy</title>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:system-ui;}
+body{background:#020617;color:white;overflow-x:hidden}
+
+/* NAV */
+.nav{
+display:flex;justify-content:space-between;align-items:center;
+padding:20px 40px;
+background:rgba(2,6,23,0.9);
+backdrop-filter:blur(10px);
+position:fixed;width:100%;top:0;z-index:100;
+}
+.nav a{margin-left:20px;color:#cbd5e1;text-decoration:none}
+.nav a:hover{color:#22c55e}
+
+/* HERO */
+.hero{
+height:100vh;
+display:flex;align-items:center;justify-content:center;
+text-align:center;
+position:relative;
+
+/* FALLBACK + IMAGE */
+background:
+linear-gradient(rgba(2,6,23,0.75), rgba(2,6,23,0.9)),
+url('https://images.pexels.com/photos/3683098/pexels-photo-3683098.jpeg?auto=compress&cs=tinysrgb&w=1600');
+
+background-size:cover;
+background-position:center;
+}
+
+.hero-content{
+max-width:700px;padding:20px;
+}
+
+.hero h1{
+font-size:3.2rem;
+font-weight:700;
+margin-bottom:20px;
+}
+
+.hero p{
+color:#cbd5e1;
+margin-bottom:30px;
+font-size:1.2rem;
+}
+
+.btn{
+background:#22c55e;
+padding:14px 32px;
+border-radius:50px;
+border:none;
+color:white;
+font-size:1.1rem;
+cursor:pointer;
+transition:.3s;
+}
+.btn:hover{
+background:#16a34a;
+transform:translateY(-3px);
+}
+
+/* CAROUSEL */
+.carousel-wrap{
+overflow:hidden;
+background:#020617;
+padding:25px 0;
+}
+
+.carousel{
+display:flex;
+width:max-content;
+animation:scroll 100s linear infinite;
+}
+
+.card{
+min-width:180px;
+margin:0 10px;
+background:#020617;
+border:1px solid rgba(255,255,255,0.05);
+padding:15px;
+border-radius:15px;
+text-align:center;
+}
+
+.price{color:#22c55e;font-weight:bold;margin-top:5px}
+
+@keyframes scroll{
+0%{transform:translateX(0)}
+100%{transform:translateX(-50%)}
+}
+
+/* FEATURES */
+.features{
+padding:80px 20px;
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+gap:20px;
+max-width:1100px;margin:auto;
+}
+
+.box{
+background:#020617;
+border:1px solid rgba(255,255,255,0.05);
+padding:25px;border-radius:15px;
+text-align:center;
+}
+
+.box h3{color:#22c55e;margin-bottom:10px}
+
+/* CONTACT */
+.contact{
+text-align:center;
+padding:60px 20px;
+color:#cbd5e1;
+}
+
+/* FLOAT BUTTONS */
+.floating{
+position:fixed;
+bottom:20px;
+right:20px;
+display:flex;
+flex-direction:column;
+gap:10px;
+z-index:200;
+}
+
+.float-btn{
+background:#22c55e;
+padding:12px 18px;
+border-radius:50px;
+color:white;
+text-decoration:none;
+font-size:14px;
+box-shadow:0 5px 20px rgba(0,0,0,0.4);
+transition:.3s;
+}
+.float-btn:hover{background:#16a34a}
+
+.about{
+  padding:100px 20px;
+  background:linear-gradient(to bottom,#020617,#020617,#020617,#030a1a);
+  border-top:1px solid rgba(255,255,255,0.05);
+}
+
+.about-container{
+  max-width:1200px;
+  margin:auto;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:40px;
+  align-items:center;
+}
+
+/* IMAGE */
+.about-image img{
+  width:100%;
+  border-radius:20px;
+  box-shadow:0 20px 60px rgba(0,0,0,0.6);
+  transition:0.4s;
+}
+.about-image img:hover{
+  transform:scale(1.03);
+}
+
+/* TEXT */
+.about-text h2{
+  font-size:2.5rem;
+  margin-bottom:15px;
+}
+
+.lead{
+  color:#22c55e;
+  font-size:1.2rem;
+  margin-bottom:20px;
+}
+
+.about-text p{
+  color:#cbd5e1;
+  margin-bottom:20px;
+  line-height:1.6;
+}
+
+/* STATS */
+.stats{
+  display:flex;
+  gap:30px;
+  margin:25px 0;
+}
+
+.stat h3{
+  font-size:2rem;
+  color:#22c55e;
+}
+
+.stat span{
+  font-size:0.9rem;
+  color:#94a3b8;
+}
+
+/* FEATURES */
+.about-features{
+  margin:20px 0;
+  display:grid;
+  gap:8px;
+  color:#cbd5e1;
+}
+
+/* RESPONSIVE */
+@media(max-width:900px){
+  .about-container{
+    grid-template-columns:1fr;
+    text-align:center;
+  }
+  .stats{
+    justify-content:center;
+  }
+}
+.team{
+  padding:100px 20px;
+  text-align:center;
+  background:#020617;
+  border-top:1px solid rgba(255,255,255,0.05);
+}
+
+.team h2{
+  font-size:2.5rem;
+  margin-bottom:10px;
+}
+
+.team-sub{
+  color:#94a3b8;
+  margin-bottom:50px;
+}
+
+/* GRID */
+.team-container{
+  max-width:1100px;
+  margin:auto;
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(230px,1fr));
+  gap:25px;
+}
+
+/* CARD */
+.team-card{
+  background:rgba(255,255,255,0.02);
+  border:1px solid rgba(255,255,255,0.05);
+  padding:25px;
+  border-radius:20px;
+  transition:0.4s;
+  backdrop-filter:blur(10px);
+}
+
+/* HOVER EFFECT */
+.team-card:hover{
+  transform:translateY(-10px);
+  box-shadow:0 20px 50px rgba(0,0,0,0.6);
+}
+
+/* IMAGE */
+.team-card img{
+  width:100px;
+  height:100px;
+  border-radius:50%;
+  object-fit:cover;
+  margin-bottom:15px;
+  border:3px solid #22c55e;
+}
+
+/* TEXT */
+.team-card h3{
+  margin-bottom:5px;
+}
+
+.team-card span{
+  display:block;
+  color:#22c55e;
+  font-size:0.9rem;
+  margin-bottom:10px;
+}
+
+.team-card p{
+  font-size:0.95rem;
+  color:#cbd5e1;
+  line-height:1.5;
+}
+.team-card{
+  opacity:0;
+  transform:translateY(30px);
+  animation:fadeUp 0.8s forwards;
+}
+
+.team-card:nth-child(2){animation-delay:0.2s}
+.team-card:nth-child(3){animation-delay:0.4s}
+.team-card:nth-child(4){animation-delay:0.6s}
+
+@keyframes fadeUp{
+  to{
+    opacity:1;
+    transform:translateY(0);
+  }
+}
+.consult{
+  padding:100px 20px;
+  text-align:center;
+  background:linear-gradient(#020617,#020617,#030a1a);
+  border-top:1px solid rgba(255,255,255,0.05);
+}
+
+.consult h2{
+  font-size:2.5rem;
+  margin-bottom:10px;
+}
+
+.consult-sub{
+  color:#94a3b8;
+  margin-bottom:40px;
+}
+
+.consult-form{
+  max-width:800px;
+  margin:auto;
+  display:flex;
+  flex-direction:column;
+  gap:15px;
+}
+
+/* ROW */
+.row{
+  display:flex;
+  gap:15px;
+}
+
+.row input,
+.row select{
+  flex:1;
+}
+
+/* INPUTS */
+input, select, textarea{
+  padding:14px;
+  border-radius:10px;
+  border:1px solid rgba(255,255,255,0.1);
+  background:#020617;
+  color:white;
+  outline:none;
+}
+
+textarea{
+  min-height:100px;
+  resize:none;
+}
+
+input:focus, select:focus, textarea:focus{
+  border-color:#22c55e;
+}
+
+/* MOBILE */
+@media(max-width:700px){
+  .row{flex-direction:column;}
+}
+.reviews{
+  padding:100px 20px;
+  text-align:center;
+  background:#020617;
+  border-top:1px solid rgba(255,255,255,0.05);
+}
+
+.sub{
+  color:#94a3b8;
+  margin-bottom:40px;
+}
+
+/* SCROLL AREA */
+.review-wrap{
+  overflow:hidden;
+  margin-bottom:50px;
+}
+
+.review-track{
+  display:flex;
+  width:max-content;
+  animation:scrollReviews 40s linear infinite;
+}
+
+.review{
+  min-width:260px;
+  margin:10px;
+  padding:20px;
+  border-radius:15px;
+  background:rgba(255,255,255,0.03);
+  border:1px solid rgba(255,255,255,0.05);
+  text-align:left;
+}
+
+.review h4{
+  margin-bottom:5px;
+}
+
+.review span{
+  color:#22c55e;
+  font-size:0.9rem;
+}
+
+.review p{
+  font-size:0.9rem;
+  color:#cbd5e1;
+}
+
+@keyframes scrollReviews{
+  0%{transform:translateX(0)}
+  100%{transform:translateX(-50%)}
+}
+
+/* FORM */
+.feedback-box{
+  max-width:500px;
+  margin:auto;
+  display:flex;
+  flex-direction:column;
+  gap:15px;
+}
+
+.feedback-box input,
+.feedback-box select,
+.feedback-box textarea{
+  padding:12px;
+  border-radius:10px;
+  border:1px solid rgba(255,255,255,0.1);
+  background:#020617;
+  color:white;
+}
+
+.feedback-box textarea{
+  min-height:100px;
+}
+.footer{
+  background:#020617;
+  padding:60px 20px 20px;
+  border-top:1px solid rgba(255,255,255,0.05);
+}
+
+.footer-container{
+  max-width:1100px;
+  margin:auto;
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  gap:30px;
+}
+
+/* COLUMNS */
+.footer-col h3,
+.footer-col h4{
+  margin-bottom:15px;
+}
+
+.footer-col p{
+  color:#94a3b8;
+  font-size:0.9rem;
+  margin-bottom:10px;
+}
+
+.footer-col a{
+  display:block;
+  color:#cbd5e1;
+  text-decoration:none;
+  margin-bottom:8px;
+  font-size:0.9rem;
+}
+
+.footer-col a:hover{
+  color:#22c55e;
+}
+
+/* BOTTOM */
+.footer-bottom{
+  text-align:center;
+  margin-top:40px;
+  padding-top:15px;
+  border-top:1px solid rgba(255,255,255,0.05);
+  color:#64748b;
+  font-size:0.85rem;
+}
+.modal{
+  display:none;
+  position:fixed;
+  top:0;left:0;width:100%;height:100%;
+  background:rgba(0,0,0,0.7);
+  justify-content:center;
+  align-items:center;
+  z-index:999;
+}
+
+.modal-content{
+  background:#020617;
+  padding:30px;
+  border-radius:15px;
+  max-width:500px;
+  text-align:center;
+}
+
+.modal-content button{
+  margin-top:20px;
+  padding:10px 20px;
+  background:#22c55e;
+  border:none;
+  border-radius:10px;
+  color:white;
+  cursor:pointer;
+}
+/* Layout */
+.consult-wrap{
+    display:flex;
+    justify-content:center;
+    padding:80px 20px;
+    background:#f1f5f9;
+}
+
+/* Card */
+.consult-ui{
+    width:100%;
+    max-width:420px;
+    background:#ffffff;
+    border-radius:18px;
+    padding:35px 30px;
+    box-shadow:0 20px 40px rgba(15,23,42,0.08);
+    border:1px solid #e2e8f0;
+    animation:slideUp 0.6s ease;
+}
+
+/* Header */
+.consult-header h2{
+    font-size:20px;
+    color:#0f172a;
+    margin-bottom:4px;
+}
+
+.consult-header p{
+    font-size:13px;
+    color:#64748b;
+    margin-bottom:25px;
+}
+
+/* Fields */
+.field{
+    position:relative;
+    margin-bottom:22px;
+}
+
+.field input,
+.field textarea{
+    width:100%;
+    padding:14px;
+    border-radius:12px;
+    border:1px solid #e2e8f0;
+    background:#f8fafc;
+    font-size:14px;
+    transition:all 0.25s ease;
+}
+
+/* Focus = premium feel */
+/* Ensure textarea background contrasts with label */
+.field input,
+.field textarea {
+    width: 100%;
+    padding: 18px 14px 14px 14px; /* top padding bigger for label */
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+    background: #f8fafc; /* light bg */
+    font-size: 14px;
+    color: #0f172a; /* dark text */
+    transition: all 0.25s ease;
+    resize: none;
+}
+
+.field textarea {
+    min-height: 120px;
+}
+
+/* Label floating */
+.field label {
+    position: absolute;
+    top: 14px;
+    left: 14px;
+    font-size: 14px;
+    color: #64748b;
+    pointer-events: none;
+    transition: all 0.25s ease;
+    background: transparent; /* remove white background */
+    padding: 0 4px;
+}
+
+.field.active label {
+    top: -8px;
+    font-size: 12px;
+    color: #0f172a;
+}
+
+/* Button */
+.consult-action{
+    width:100%;
+    padding:14px;
+    border:none;
+    border-radius:12px;
+    background:#0f172a;
+    color:#ffffff;
+    font-size:15px;
+    font-weight:500;
+    cursor:pointer;
+    transition:all 0.3s ease;
+}
+
+/* Hover = subtle power */
+.consult-action:hover{
+    transform:translateY(-2px);
+    box-shadow:0 10px 25px rgba(15,23,42,0.25);
+}
+
+/* Success message */
+.success-msg{
+    margin-top:15px;
+    font-size:14px;
+    color:#22c55e;
+    text-align:center;
+    display:none;
+}
+
+/* Animation */
+@keyframes slideUp{
+    from{opacity:0; transform:translateY(20px);}
+    to{opacity:1; transform:translateY(0);}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<div class="nav">
+<div><b>Kerich Pharmacy</b></div>
+<div>
+<a href="#features">Features and About Us</a>
+<a href="shop.html">Shop</a>
+<a href="#consult">Consultation</a>
+<a href="#contact">Contact</a>
+</div>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+<div class="hero-content">
+<h1>Your Trusted Online Pharmacy</h1>
+<p>Free consultation. All Tests available. Fast delivery. Genuine medicine. Simple ordering.</p>
+<button class="btn" onclick="location.href='shop.html'">Start Shopping</button>
+</div>
+</section>
+
+<!-- CAROUSEL -->
+<div class="carousel-wrap">
+<div class="carousel" id="carousel"></div>
+</div>
+<!-- Firebase App (the core Firebase SDK) -->
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+
+<script>
+const firebaseConfig = {
+    apiKey: "AIzaSyATESqDeDuOOLjvEqZ9J8j58M59nQrbnmw",
+  authDomain: "kerichpharma.firebaseapp.com",
+  projectId: "kerichpharma",
+  storageBucket: "kerichpharma.firebasestorage.app",
+  messagingSenderId: "668206751685",
+  appId: "1:668206751685:web:cc097cff689269378375ac",
+  measurementId: "G-QDRBJ6S9PZ"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+</script>
+<!-- FEATURES -->
+<section class="features" id="features">
+<div class="box">
+<h3>Wide Selection</h3>
+<p>500+ medicines ready instantly</p>
+</div>
+<div class="box">
+<h3>Fast Delivery</h3>
+<p>Same-day delivery available</p>
+</div>
+<div class="box">
+<h3>Integrity and Credibility</h3>
+<p>Deal with well trained staff</p>
+</div>
+<div class="box">
+<div class="box">
+<h3>Trusted Quality</h3>
+<p>Certified and safe products</p>
+</div>
+</section>
+<div class="box">
+<h3>Free Consultation</h3>
+<p>Get free consultation from well trained specialists</p>
+</div>
+<section class="about" id="about">
+  <div class="about-container">
+
+    <!-- LEFT: IMAGE -->
+    <div class="about-image">
+      <img src="https://images.pexels.com/photos/3683074/pexels-photo-3683074.jpeg?auto=compress&cs=tinysrgb&w=1200" alt="Pharmacy">
+    </div>
+
+    <!-- RIGHT: CONTENT -->
+    <div class="about-text">
+      <h2>Redefining How You Access Healthcare</h2>
+
+      <p class="lead">
+        Kerich Pharmacy blends technology and care to deliver safe, genuine medicines directly to you. 
+        No queues. No uncertainty. Just fast, reliable service.
+      </p>
+
+      <p>
+        Built in Nairobi, we focus on convenience without compromise. Every product is sourced from trusted suppliers,
+        verified for quality, and delivered with precision. Whether it’s daily essentials or urgent needs,
+        we make access effortless.
+      </p>
+
+      <!-- STATS -->
+      <div class="stats">
+        <div class="stat">
+          <h3 id="count1">400+</h3>
+          <span>Orders Delivered</span>
+        </div>
+        <div class="stat">
+          <h3 id="count2">2000+</h3>
+          <span>Medicines Available</span>
+        </div>
+        <div class="stat">
+          <h3 id="count3">1200+</h3>
+          <span>Happy Customers</span>
+        </div>
+      </div>
+
+      <!-- FEATURES -->
+      <div class="about-features">
+        <div>✔ Genuine & Verified Medicines</div>
+        <div>✔ Fast Nairobi Delivery</div>
+        <div>✔ Simple & Secure Ordering</div>
+      </div>
+
+      <button class="btn" onclick="location.href='shop.html'">
+        Start Shopping
+      </button>
+    </div>
+
+  </div>
+  <section class="team" id="team">
+  <h2>Meet Our Team</h2>
+  <p class="team-sub">Dedicated professionals committed to your health and wellbeing</p>
+
+  <div class="team-container">
+
+    <!-- MEMBER -->
+    <div class="team-card">
+      <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="">
+      <h3>Dr. Sarah Wanjiku</h3>
+      <span>Lead Pharmacist</span>
+      <p>"Your health is our priority. We ensure every medicine is safe, effective, and trusted."</p>
+    </div>
+
+    <div class="team-card">
+      <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="">
+      <h3>Dr. James Otieno</h3>
+      <span>Clinical Pharmacist</span>
+      <p>"We simplify access to healthcare so you can focus on what matters most—your wellbeing."</p>
+    </div>
+
+    <div class="team-card">
+      <img src="https://randomuser.me/api/portraits/women/68.jpg" alt="">
+      <h3>Dr. Mercy Achieng</h3>
+      <span>Pharmacy Specialist</span>
+      <p>"Every prescription handled with care, precision, and a commitment to quality."</p>
+    </div>
+
+    <div class="team-card">
+      <img src="https://randomuser.me/api/portraits/men/75.jpg" alt="">
+      <h3>Dr. Brian Mwangi</h3>
+      <span>Support Pharmacist</span>
+      <p>"We’re here to guide you with trusted advice and reliable solutions every day."</p>
+    </div>
+
+  </div>
+</section>
+</section>
+<section class="consult" id="consult">
+  <h2>Book Consultation</h2>
+  <p class="consult-sub">Speak to a pharmacist or visit us in person</p>
+
+<div class="consult-wrap">
+  <form id="consult-form" class="consult-ui">
+
+    <div class="consult-header">
+      <h2>Consult a Pharmacist</h2>
+      <p>Private • Secure • Fast Response</p>
+    </div>
+
+    <div class="field">
+      <input type="text" id="consult-name" required>
+      <label>Full Name</label>
+    </div>
+
+    <div class="field">
+      <input type="tel" id="consult-phone" required>
+      <label>Phone Number</label>
+    </div>
+
+    <div class="field">
+      <textarea id="consult-message" rows="4" required></textarea>
+      <label>Describe your issue</label>
+    </div>
+
+    <button type="submit" class="consult-action">
+      <span>Send Consultation</span>
+    </button>
+
+    <div id="consult-confirm" class="success-msg">
+      ✔ Request sent successfully
+    </div>
+
+  </form>
+</div>
+
+
+   
+</section>
+<section class="reviews" id="reviews">
+  <h2>What Our Customers Say</h2>
+  <p class="sub">Trusted by many, built for you</p>
+
+  <!-- AUTO SCROLL REVIEWS -->
+  <div class="review-wrap">
+    <div class="review-track" id="reviewTrack"></div>
+  </div>
+<script>
+document.getElementById('consult-form').addEventListener('submit', function(event) {
+    event.preventDefault();
+
+    const name = document.getElementById('consult-name').value.trim();
+    const phone = document.getElementById('consult-phone').value.trim();
+    const message = document.getElementById('consult-message').value.trim();
+
+    if (!name || !phone || !message) {
+        alert("Please fill all fields.");
+        return;
+    }
+
+    // Create formatted date & time
+    const now = new Date();
+    const formattedTime = now.toLocaleString('en-GB', { 
+        day: '2-digit', month: 'short', year: 'numeric', 
+        hour: '2-digit', minute: '2-digit', second: '2-digit',
+        hour12: false 
+    });
+    // Example output: "27-Mar-2026, 14:30:15"
+
+    db.collection("consultations").add({
+        customer: name,                 
+        user: phone,                    
+        notes: message,                 
+        time: formattedTime             // <-- Store formatted string
+    })
+    .then(() => {
+        const confirmMsg = document.getElementById('consult-confirm');
+        confirmMsg.style.display = "block";
+        document.getElementById('consult-form').reset();
+        setTimeout(() => { confirmMsg.style.display = "none"; }, 3000);
+    })
+    .catch((error) => {
+        console.error("Error:", error);
+        alert("Something went wrong. Try again.");
+    });
+});
+</script>
+  <!-- FEEDBACK FORM -->
+  <div class="feedback-box">
+    <h3>Leave Your Feedback</h3>
+    <form onsubmit="submitFeedback(event)">
+      <input type="text" id="fname" placeholder="Your Name" required>
+      
+      <select id="rating" required>
+        <option value="">Rating</option>
+        <option>⭐⭐⭐⭐⭐ Excellent</option>
+        <option>⭐⭐⭐⭐ Good</option>
+        <option>⭐⭐⭐ Average</option>
+        <option>⭐⭐ Needs Improvement</option>
+      </select>
+
+      <textarea id="fmessage" placeholder="Write your feedback..." required></textarea>
+      <button class="btn">Submit Feedback</button>
+    </form>
+  </div>
+</section>
+<footer class="footer">
+
+  <div class="footer-container">
+
+    <!-- BRAND -->
+    <div class="footer-col">
+      <h3>Kerich Pharmacy</h3>
+      <p>
+        Your trusted online pharmacy delivering genuine medicines, fast service,
+        and reliable healthcare solutions across Nairobi.
+      </p>
+      <p>📍Wood Avenue, Kilimani – Woodlands Mall</p>
+    </div>
+<div style="width:100%; max-width:600px; margin:20px auto;">
+    <iframe 
+        src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d15955.123456789!2d36.7872!3d-1.2947!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x182f123456789abc%3A0xabcdef1234567890!2sWoodvale%20Mall%2C%20Kilimani%2C%20Nairobi!5e0!3m2!1sen!2ske!4v1689999999999" 
+        width="100%" 
+        height="300" 
+        style="border:0;" 
+        allowfullscreen="" 
+        loading="lazy" 
+        referrerpolicy="no-referrer-when-downgrade">
+    </iframe>
+</div>
+<p style="text-align:center; margin:10px 0;">
+    <a href="https://maps.app.goo.gl/vVjXuM1YnEHZRFQg6" target="_blank" 
+       style="padding:10px 20px; background:#22c55e; color:#fff; text-decoration:none; border-radius:5px;">
+        Get Directions to Kerich Pharmaceuticals
+    </a>
+</p>
+    <!-- LINKS -->
+    <div class="footer-col">
+      <h4>Quick Links</h4>
+      <a href="#features">Features</a>
+      <a href="#about">About</a>
+      <a href="#team">Team</a>
+      <a href="#consult">Consultation</a>
+      <a href="shop.html">Shop</a>
+      <a href="#contact">Contact</a>
+    </div>
+
+    <!-- LEGAL -->
+    <div class="footer-col">
+      <h4>Legal</h4>
+      <a href="#" onclick="openTerms()">Terms & Conditions</a>
+      <a href="#" onclick="openPrivacy()">Privacy Policy</a>
+    </div>
+
+    <!-- CONTACT -->
+    <div class="footer-col">
+      <h4>Contact</h4>
+      <p>📞 0726283505</p>
+      <p>📞 0718113481</p>
+      <p>📍 Nairobi, Kenya</p>
+      <p>Wood Avenue, Kilimani – Woodlands Mall</p>
+      <p>✉ Kerichpharmaceuticalslimited@gmail.com</p>
+      
+    </div>
+
+  </div>
+
+  <!-- BOTTOM -->
+  <div class="footer-bottom">
+    © 2026 Kerich Pharmacy. All rights reserved.
+  </div>
+
+</footer>
+
+<!-- TERMS MODAL -->
+<div id="termsModal" class="modal">
+  <div class="modal-content">
+
+    <h3>Terms & Conditions</h3>
+    <p>
+      By using Kerich Pharmacy, you agree to purchase medicines responsibly.
+      We ensure all products are genuine but advise consulting a professional
+      before use. We are not liable for misuse of products.
+    </p>
+    <button onclick="closeModal()">Close</button>
+  </div>
+</div>
+
+<!-- PRIVACY MODAL -->
+<div id="privacyModal" class="modal">
+  <div class="modal-content">
+    <h3>Privacy Policy</h3>
+    <p>
+      We respect your privacy. Your personal data is securely stored and never shared
+      with third parties except for order processing and delivery purposes.
+    </p>
+    <button onclick="closeModal()">Close</button>
+  </div>
+</div>
+<!-- FLOAT BUTTONS -->
+<div class="floating">
+
+<a class="float-btn" href="tel:254726283505">📞 Call</a>
+<a class="float-btn" href="https://wa.me/254726283505">💬 WhatsApp</a>
+</div>
+<script>
+function animateValue(id, end, speed){
+  let obj=document.getElementById(id);
+  let start=0;
+  let increment=end/100;
+
+  let timer=setInterval(()=>{
+    start+=increment;
+    if(start>=end){
+      obj.innerText=end+"+";
+      clearInterval(timer);
+    }else{
+      obj.innerText=Math.floor(start);
+    }
+  },speed);
+}
+
+window.addEventListener("scroll",()=>{
+  const section=document.querySelector(".about");
+  const pos=section.getBoundingClientRect().top;
+
+  if(pos<window.innerHeight-100){
+    animateValue("count1",10000,15);
+    animateValue("count2",500,20);
+    animateValue("count3",8000,15);
+  }
+});
+</script>
+<script>
+const meds=[
+"Paracetamol","Ibuprofen","Amoxicillin","Cough Syrup","Vitamin C",
+"Zinc","Aspirin","Antacid","Omega 3","Eye Drops",
+"Nasal Spray","Multivitamins","Pain Gel","Allergy Tabs","Glucose",
+"Thermometer","Sanitizer","Face Mask","Antibiotic Cream","Hair Oil",
+"Sleeping Aid","Digestive Enzyme","Protein Powder","Calcium",
+"Iron","Antifungal","Muscle Balm","Energy Drink","Lip Balm",
+"Antiseptic","Shampoo","Conditioner","Hand Cream","Baby Lotion",
+"Baby Oil","Ear Drops","Foot Cream","Capsules","Pain Tablets",
+"Cold & Flu","Herbal Tea","Detox Drink","BP Monitor","Glucose Meter"
+];
+
+const c=document.getElementById("carousel");
+
+function load(){
+meds.concat(meds).forEach(m=>{
+const d=document.createElement("div");
+d.className="card";
+d.innerHTML=`${m}</div>`;
+c.appendChild(d);
+});
+}
+load();
+
+</script>
+<script>
+// SAMPLE REVIEWS (10)
+const reviews = [
+{name:"Brian",rating:"⭐⭐⭐⭐⭐",msg:"Fast delivery and genuine medicine."},
+{name:"Mercy",rating:"⭐⭐⭐⭐",msg:"Very convenient and easy to use."},
+{name:"James",rating:"⭐⭐⭐⭐⭐",msg:"Best pharmacy experience online."},
+{name:"Faith",rating:"⭐⭐⭐⭐",msg:"Customer support is excellent."},
+{name:"Kevin",rating:"⭐⭐⭐⭐⭐",msg:"Affordable and reliable."},
+{name:"Ann",rating:"⭐⭐⭐⭐",msg:"Delivery was quick and smooth."},
+{name:"Peter",rating:"⭐⭐⭐⭐⭐",msg:"Highly recommend this pharmacy."},
+{name:"Lucy",rating:"⭐⭐⭐⭐",msg:"Very professional service."},
+{name:"Daniel",rating:"⭐⭐⭐⭐⭐",msg:"Top quality medicines."},
+{name:"Esther",rating:"⭐⭐⭐⭐",msg:"Easy ordering process."}
+];
+
+const track = document.getElementById("reviewTrack");
+
+// LOAD REVIEWS (duplicate for infinite loop)
+function loadReviews(){
+  [...reviews, ...reviews].forEach(r=>{
+    const div=document.createElement("div");
+    div.className="review";
+    div.innerHTML=`
+      <h4>${r.name}</h4>
+      <span>${r.rating}</span>
+      <p>${r.msg}</p>
+    `;
+    track.appendChild(div);
+  });
+}
+loadReviews();
+
+// SUBMIT FEEDBACK
+function submitFeedback(e){
+  e.preventDefault();
+
+  let name=document.getElementById("fname").value;
+  let rating=document.getElementById("rating").value;
+  let message=document.getElementById("fmessage").value;
+
+  // SAVE TO FIREBASE
+  db.collection("feedback").add({
+    customer:name,
+    rating:rating,
+    message:message,
+    time:new Date().toLocaleString()
+  })
+  .then(()=>{
+    alert("Thank you for your feedback!");
+    document.querySelector(".feedback-box form").reset();
+  })
+  .catch(err=>{
+    console.error(err);
+    alert("Error submitting feedback");
+  });
+}
+
+</script>
+<script>
+function openTerms(){
+  document.getElementById("termsModal").style.display="flex";
+}
+
+function openPrivacy(){
+  document.getElementById("privacyModal").style.display="flex";
+}
+
+function closeModal(){
+  document.getElementById("termsModal").style.display="none";
+  document.getElementById("privacyModal").style.display="none";
+}
+</script>
+<script>
+window.addEventListener('DOMContentLoaded', function(){
+
+    const inputs = document.querySelectorAll('.field input, .field textarea');
+
+    inputs.forEach(input => {
+
+        const field = input.parentElement;
+
+        // If already filled (page reload)
+        if(input.value.trim() !== ''){
+            field.classList.add('active');
+        }
+
+        input.addEventListener('focus', () => {
+            field.classList.add('active');
+        });
+
+        input.addEventListener('blur', () => {
+            if(input.value.trim() === ''){
+                field.classList.remove('active');
+            }
+        });
+
+        input.addEventListener('input', () => {
+            if(input.value.trim() !== ''){
+                field.classList.add('active');
+            }
+        });
+
+    });
+
+});
+// Floating labels for inputs and textarea
+const fields = document.querySelectorAll('.field input, .field textarea');
+
+fields.forEach(f => {
+    f.addEventListener('focus', () => {
+        f.parentElement.classList.add('active');
+    });
+    f.addEventListener('blur', () => {
+        if (!f.value) {
+            f.parentElement.classList.remove('active');
+        }
+    });
+
+    // Activate if pre-filled (optional, for auto-fill)
+    if (f.value) {
+        f.parentElement.classList.add('active');
+    }
+});
+</script>
+
+</body>
+</html>

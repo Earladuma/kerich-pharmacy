@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Kerich Pharmacy Admin Dashboard</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+body{margin:0;font-family:sans-serif;background:#f4f7fb;}
+.sidebar{position:fixed;width:260px;height:100vh;background:#111827;color:white;padding:20px;overflow-y:auto;}
+.sidebar h2{color:#22c55e;margin-bottom:20px;}
+.sidebar a{display:block;margin:15px 0;color:white;text-decoration:none;cursor:pointer;}
+.sidebar a.logout{color:#ef4444;}
+.main{margin-left:280px;padding:20px;overflow-y:auto;max-height:100vh;}
+.card{background:white;padding:15px;border-radius:10px;margin:10px 0;box-shadow:0 2px 8px rgba(0,0,0,0.1);}
+button{padding:8px 12px;background:#22c55e;color:white;border:none;border-radius:6px;cursor:pointer;margin:5px 0;}
+input,select,textarea{width:100%;padding:8px;margin:5px 0;border:1px solid #ccc;border-radius:5px;}
+table{width:100%;background:white;border-radius:10px;margin-top:10px;border-collapse:collapse;}
+th,td{padding:10px;border-bottom:1px solid #eee;text-align:left;}
+.modal{display:none;position:fixed;width:100%;height:100%;background:rgba(0,0,0,0.5);justify-content:center;align-items:center;top:0;left:0;z-index:1000;}
+.modal-content{background:white;padding:20px;border-radius:10px;width:450px;max-height:90vh;overflow-y:auto;}
+.chart-container{background:white;padding:15px;border-radius:10px;margin:20px 0;}
+.notification{background:#fef3c7;padding:10px;margin:5px 0;border-left:5px solid #f59e0b;border-radius:6px;}
+#logs input{
+  margin-bottom:10px;
+}
+
+#logs table{
+  width:100%;
+  background:white;
+  border-radius:10px;
+  overflow:hidden;
+}
+
+#logs th{
+  background:#111827;
+  color:white;
+}
+
+#logs tr:hover{
+  background:#f3f4f6;
+}
+</style>
+</head>
+<body>
+
+<div class="sidebar">
+<h2>Kerich Pharmacy Admin Dashboard</h2>
+<a onclick="show('dashboard')">Dashboard</a>
+<a onclick="show('inventory')">Inventory</a>
+<a onclick="show('orders')">Orders</a>
+<a onclick="show('customers')">Customers</a>
+<a onclick="show('consultations')">Consultations</a>
+<a onclick="show('suppliers')">Suppliers</a>
+<a onclick="show('feedback')">Feedback</a>
+<a onclick="show('reports')">Reports</a>
+<a onclick="show('sales')">Sales</a>
+<a onclick="show('logs')">Logs</a>
+<hr>
+<a onclick="logout()" class="logout">Logout</a>
+</div>
+
+<div class="main">
+
+<!-- AUTH -->
+<div id="auth">
+<h2>Login</h2>
+<input id="email" placeholder="Email">
+<input id="password" type="password" placeholder="Password">
+<button onclick="login()">Login</button>
+</div>
+
+<!-- DASHBOARD -->
+<div id="dashboard" style="display:none;">
+<h2>Dashboard</h2>
+<div class="card" id="dashboardCards"></div>
+<div class="chart-container"><canvas id="stockChart"></canvas></div>
+<div class="chart-container"><canvas id="ordersChart"></canvas></div>
+<div class="chart-container"><canvas id="salesChart"></canvas></div>
+<div id="notifications"></div>
+</div>
+
+<!-- INVENTORY -->
+<div id="inventory" style="display:none;">
+<h2>Inventory</h2>
+<input id="search" placeholder="Search medicine..." oninput="filterInventory()">
+
+<button onclick="openInv()">Add Medicine</button>
+<table id="invTable"></table>
+</div>
+
+
+<!-- ORDERS -->
+<div id="orders" style="display:none;">
+<h2>Orders</h2>
+<button onclick="openOrder()">New Order</button>
+<table id="orderTable"></table>
+</div>
+
+<!-- CUSTOMERS -->
+<div id="customers" style="display:none;">
+<h2>Customers</h2>
+<button onclick="openCustomer()">Add Customer</button>
+<table id="customerTable"></table>
+</div>
+
+<!-- CONSULTATIONS -->
+<div id="consultations" style="display:none;">
+<h2>Consultations</h2>
+<button onclick="openConsult()">New Consultation</button>
+<table id="consultTable"></table>
+</div>
+
+<!-- SUPPLIERS -->
+<div id="suppliers" style="display:none;">
+<h2>Suppliers</h2>
+<button onclick="openSupplier()">Add Supplier</button>
+<table id="supplierTable"></table>
+</div>
+
+<!-- FEEDBACK -->
+<div id="feedback" style="display:none;">
+<h2>Feedback</h2>
+<table id="feedbackTable"></table>
+</div>
+
+<!-- REPORTS -->
+<div id="reports" style="display:none;">
+<h2>Reports</h2>
+<button onclick="exportExcel()">Export Excel</button>
+<button onclick="exportPDF()">Export PDF</button>
+<div class="chart-container"><canvas id="reportSalesChart"></canvas></div>
+<div class="chart-container"><canvas id="reportOrdersChart"></canvas></div>
+</div>
+<!-- SALES -->
+<div id="sales" style="display:none;">
+<h2>Sales & Analytics</h2>
+
+<button onclick="openSale()">Record Sale</button>
+
+<div class="card" id="salesSummary"></div>
+
+<input id="filterProduct" placeholder="Filter by product">
+<input type="date" id="filterDate">
+<button onclick="applySalesFilter()">Filter</button>
+
+<table id="salesTable"></table>
+
+<div class="chart-container"><canvas id="salesRevenueChart"></canvas></div>
+<div class="chart-container"><canvas id="profitChart"></canvas></div>
+
+<div class="card" id="insights"></div>
+</div>
+</div>
+
+<!-- LOGS -->
+<div id="logs" style="display:none;">
+  <h2>System Logs</h2>
+
+  <input 
+    id="logSearch" 
+    oninput="filterLogs()" 
+    placeholder="Search by user, action or details..."
+  >
+
+  <table>
+    <thead>
+      <tr>
+        <th>User</th>
+        <th>Action</th>
+        <th>Details</th>
+        <th>Time</th>
+      </tr>
+    </thead>
+
+    <tbody id="logsBody"></tbody>
+  </table>
+</div>
+
+<!-- MODAL -->
+<div id="modal" class="modal">
+  <div class="modal-content" id="modalBody"></div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getFirestore, collection, addDoc, onSnapshot, doc, updateDoc, deleteDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+const app = initializeApp({
+apiKey: "AIzaSyATESqDeDuOOLjvEqZ9J8j58M59nQrbnmw",
+  authDomain: "kerichpharma.firebaseapp.com",
+  projectId: "kerichpharma",
+  storageBucket: "kerichpharma.firebasestorage.app",
+  messagingSenderId: "668206751685",
+  appId: "1:668206751685:web:cc097cff689269378375ac",
+  measurementId: "G-QDRBJ6S9PZ"
+});
+
+
+const db = getFirestore(app);
+const auth = getAuth(app);
+let currentUser=null;
+const authSection=document.getElementById("auth");
+const notifications=document.getElementById("notifications");
+
+// --- LOGIN / LOGOUT ---
+window.login = async ()=>{
+try { await signInWithEmailAndPassword(auth,email.value,password.value); } 
+catch(e){ alert("Login failed"); }
+};
+window.logout = async ()=>{ await signOut(auth); };
+
+// --- AUTH STATE ---
+onAuthStateChanged(auth,user=>{
+if(user){
+currentUser=user.email;
+authSection.style.display="none";
+show("dashboard");
+loadAll();
+}else{
+currentUser=null;
+authSection.style.display="block";
+["dashboard","inventory","orders","customers","consultations","suppliers","feedback","reports","logs"].forEach(id=>document.getElementById(id).style.display="none");
+}
+});
+
+// --- NAVIGATION ---
+window.show = s=>{
+if(!currentUser){ alert("Please login first"); return; }
+["dashboard","inventory","orders","customers","consultations","suppliers","feedback","reports","logs"].forEach(id=>document.getElementById(id).style.display="none");
+document.getElementById(s).style.display="block";
+};
+
+
+// --- NOTIFICATIONS ---
+function addNotification(msg){
+const n=document.createElement("div"); n.className="notification"; n.innerText=msg;
+notifications.prepend(n);
+setTimeout(()=>n.remove(),10000);
+}
+
+// --- LOG FUNCTION ---
+async function log(action, details=""){
+  await addDoc(collection(db,"logs"),{
+    user: currentUser,
+    action: action,
+    details: details,
+    time: new Date().toLocaleString()
+  });
+}
+// --- INVENTORY ---
+window.openInv = ()=>{
+modal.style.display="flex";
+modalBody.innerHTML=`<h3>Add Medicine</h3>
+<input id="n" placeholder="Name">
+<input id="c" placeholder="Category">
+<input id="s" type="number" placeholder="Stock">
+<input id="m" type="number" placeholder="Min Stock">
+<input id="p" type="number" placeholder="Price">
+<button onclick="saveInv()">Save</button>`;
+
+};
+// 🔍 SEARCH FUNCTION
+
+
+window.openSale = ()=>{
+modal.style.display="flex";
+modalBody.innerHTML=`
+<h3>Record Sale</h3>
+<select id="saleProd"></select>
+<input id="saleQty" type="number" placeholder="Quantity">
+<input id="buyPrice" type="number" placeholder="Buying Price">
+<input id="sellPrice" type="number" placeholder="Selling Price">
+<button onclick="saveSale()">Save Sale</button>`;
+loadProductsForSales();
+
+};
+
+function loadProductsForSales(){
+onSnapshot(collection(db,"inventory"),snap=>{
+saleProd.innerHTML="";
+snap.forEach(d=>{
+saleProd.innerHTML+=`<option value="${d.id}">${d.data().name}</option>`;
+});
+});
+}
+window.saveSale = async ()=>{
+const ref=doc(db,"inventory",saleProd.value);
+const snap=await getDoc(ref);
+const item=snap.data();
+
+const qty=+saleQty.value;
+const buy=+buyPrice.value;
+const sell=+sellPrice.value;
+
+if(item.stock < qty){
+alert("Not enough stock");
+return;
+}
+
+// calculations
+const revenue = sell * qty;
+const cost = buy * qty;
+const profit = revenue - cost;
+const margin = ((profit / cost) * 100).toFixed(2);
+
+// update stock
+await updateDoc(ref,{stock:item.stock - qty});
+
+// save sale
+await addDoc(collection(db,"sales"),{
+product:item.name,
+qty,
+buy,
+sell,
+revenue,
+cost,
+profit,
+margin,
+time:new Date().toLocaleString()
+});
+
+await log("Recorded sale");
+addNotification(`Sale recorded: ${item.name}`);
+
+modal.style.display="none";
+};
+let allSales=[];
+
+function renderSales(){
+onSnapshot(collection(db,"sales"),snap=>{
+allSales=[];
+salesTable.innerHTML=`<tr>
+<th>Product</th><th>Qty</th><th>Revenue</th>
+<th>Cost</th><th>Profit</th><th>Margin %</th><th>Time</th>
+</tr>`;
+
+snap.forEach(d=>{
+const s=d.data();
+allSales.push(s);
+addSaleRow(s);
+});
+
+analyzeSales(allSales);
+});
+}
+
+function addSaleRow(s){
+salesTable.innerHTML+=`
+<tr>
+<td>${s.product}</td>
+<td>${s.qty}</td>
+<td>${s.revenue}</td>
+<td>${s.cost}</td>
+<td>${s.profit}</td>
+<td>${s.margin}%</td>
+<td>${s.time}</td>
+</tr>`;
+}
+
+window.applySalesFilter = ()=>{
+const p=filterProduct.value.toLowerCase();
+const d=filterDate.value;
+
+salesTable.innerHTML=`<tr>
+<th>Product</th><th>Qty</th><th>Revenue</th>
+<th>Cost</th><th>Profit</th><th>Margin %</th><th>Time</th>
+</tr>`;
+
+allSales.filter(s=>{
+return (!p || s.product.toLowerCase().includes(p)) &&
+(!d || s.time.includes(d));
+}).forEach(addSaleRow);
+};
+function analyzeSales(data){
+let revenue=0, cost=0, profit=0;
+
+let productSales={};
+let productProfit={};
+
+data.forEach(s=>{
+revenue+=s.revenue;
+cost+=s.cost;
+profit+=s.profit;
+
+productSales[s.product]=(productSales[s.product]||0)+s.qty;
+productProfit[s.product]=(productProfit[s.product]||0)+s.profit;
+});
+
+const margin=((profit/cost)*100 || 0).toFixed(2);
+
+// bests
+const bestSelling = Object.keys(productSales).reduce((a,b)=>productSales[a]>productSales[b]?a:b,"-");
+const bestProfit = Object.keys(productProfit).reduce((a,b)=>productProfit[a]>productProfit[b]?a:b,"-");
+
+// UI
+salesSummary.innerHTML=`
+<h3>Summary</h3>
+<p>Total Revenue: ${revenue}</p>
+<p>Total Cost: ${cost}</p>
+<p>Total Profit: ${profit}</p>
+<p>Avg Margin: ${margin}%</p>
+<p>Top Product: ${bestSelling}</p>
+<p>Most Profitable: ${bestProfit}</p>
+`;
+
+// insights
+let tips=[];
+if(margin<20) tips.push("Increase prices or reduce costs.");
+if(bestSelling) tips.push(`Restock ${bestSelling}, high demand.`);
+if(bestProfit) tips.push(`Promote ${bestProfit}, high profit.`);
+
+insights.innerHTML="<h3>AI Suggestions</h3>"+tips.map(t=>`<p>${t}</p>`).join("");
+
+// charts
+renderSalesCharts(productSales, productProfit);
+}
+let revenueChart, profitChart;
+
+function renderSalesCharts(sales, profits){
+const labels=Object.keys(sales);
+const salesData=Object.values(sales);
+const profitData=Object.values(profits);
+
+// revenue chart
+if(revenueChart) revenueChart.destroy();
+const ctx1=document.getElementById("salesRevenueChart").getContext("2d");
+revenueChart=new Chart(ctx1,{
+type:"bar",
+data:{labels,datasets:[{label:"Sales Volume",data:salesData,backgroundColor:"#22c55e"}]}
+});
+
+// profit chart
+if(profitChart) profitChart.destroy();
+const ctx2=document.getElementById("profitChart").getContext("2d");
+profitChart=new Chart(ctx2,{
+type:"line",
+data:{labels,datasets:[{label:"Profit",data:profitData,borderColor:"#16a34a"}]}
+});
+}
+
+window.saveInv=async()=>{
+const data={ name:n.value, category:c.value, stock:+s.value, min:+m.value, price:+p.value };
+if(!data.name){ alert("Fill name"); return;}
+await addDoc(collection(db,"inventory"),data);
+await log("Added medicine");
+modal.style.display="none";
+};
+function renderInv(){
+onSnapshot(collection(db,"inventory"),snap=>{
+invTable.innerHTML=`<tr><th>Name</th><th>Stock</th><th>Action</th></tr>`;
+snap.forEach(d=>{
+const i=d.data();
+invTable.innerHTML+=`<tr><td>${i.name}</td><td>${i.stock}</td>
+<td><button onclick="editInv('${d.id}')">Edit</button>
+<button onclick="delInv('${d.id}')">Delete</button></td></tr>`;
+if(i.stock<i.min)addNotification(`Low stock: ${i.name}`);
+});
+});
+}
+window.editInv=async id=>{
+const snap=await getDoc(doc(db,"inventory",id));
+const i=snap.data();
+modal.style.display="flex";
+modalBody.innerHTML=`<h3>Edit</h3>
+<input id="n" value="${i.name}">
+<input id="s" value="${i.stock}">
+<button onclick="updateInv('${id}')">Update</button>`;
+};
+window.updateInv=async id=>{
+await updateDoc(doc(db,"inventory",id),{ name:n.value, stock:+s.value });
+await log("Edited medicine");
+modal.style.display="none";
+};
+window.delInv=async id=>{
+await deleteDoc(doc(db,"inventory",id));
+await log("Deleted medicine");
+};
+
+// --- ORDERS ---
+window.openOrder=()=>{
+modal.style.display="flex";
+modalBody.innerHTML=`<h3>New Order</h3>
+<input id="cust" placeholder="Customer Name">
+<select id="prod"></select>
+<input id="qty" type="number" placeholder="Qty">
+<button onclick="placeOrder()">Place</button>`;
+loadProducts();
+};
+function loadProducts(){ onSnapshot(collection(db,"inventory"),snap=>{ prod.innerHTML=""; snap.forEach(d=>{ prod.innerHTML+=`<option value="${d.id}">${d.data().name}</option>`; }); }); }
+window.placeOrder=async()=>{
+const ref=doc(db,"inventory",prod.value);
+const snap=await getDoc(ref); const item=snap.data();
+if(item.stock<qty.value){ alert("Not enough stock"); return;}
+await updateDoc(ref,{stock:item.stock-qty.value});
+await addDoc(collection(db,"orders"),{customer:cust.value,product:item.name,qty:+qty.value,user:currentUser,time:new Date().toLocaleString()});
+await log("Placed order");
+addNotification(`New order placed: ${item.name} x${qty.value}`);
+modal.style.display="none";
+};
+function renderOrders(){ onSnapshot(collection(db,"orders"),snap=>{
+orderTable.innerHTML=`<tr><th>Customer</th><th>Product</th><th>Qty</th><th>Time</th></tr>`;
+snap.forEach(d=>{ const o=d.data();
+orderTable.innerHTML+=`<tr><td>${o.customer}</td><td>${o.product}</td><td>${o.qty}</td><td>${o.time}</td></tr>`;
+});
+}); }
+
+// --- CUSTOMERS ---
+window.openCustomer=()=>{
+modal.style.display="flex";
+modalBody.innerHTML=`<h3>Add Customer</h3>
+<input id="custName" placeholder="Name">
+<input id="custPhone" placeholder="Phone">
+<input id="custEmail" placeholder="Email">
+<button onclick="saveCustomer()">Save</button>`;
+};
+window.saveCustomer=async()=>{ await addDoc(collection(db,"customers"),{name:custName.value,phone:custPhone.value,email:custEmail.value}); modal.style.display="none"; };
+function renderCustomers(){ onSnapshot(collection(db,"customers"),snap=>{
+customerTable.innerHTML=`<tr><th>Name</th><th>Phone</th><th>Email</th></tr>`;
+snap.forEach(d=>{ const c=d.data();
+customerTable.innerHTML+=`<tr><td>${c.name}</td><td>${c.phone}</td><td>${c.email}</td></tr>`;
+});
+}); }
+
+// --- CONSULTATIONS ---
+window.openConsult=()=>{
+modal.style.display="flex";
+modalBody.innerHTML=`<h3>New Consultation</h3>
+<input id="conCust" placeholder="Customer Name">
+<textarea id="conNotes" placeholder="Notes"></textarea>
+<button onclick="saveConsult()">Save</button>`;
+};
+window.saveConsult=async()=>{ await addDoc(collection(db,"consultations"),{customer:conCust.value,notes:conNotes.value,user:currentUser,time:new Date().toLocaleString()}); addNotification(`New consultation request from ${conCust.value}`); modal.style.display="none"; };
+function renderConsults(){ onSnapshot(collection(db,"consultations"),snap=>{
+consultTable.innerHTML=`<tr><th>Customer</th><th>Notes</th><th>User</th><th>Time</th></tr>`;
+snap.forEach(d=>{ const c=d.data();
+consultTable.innerHTML+=`<tr><td>${c.customer}</td><td>${c.notes}</td><td>${c.user}</td><td>${c.time}</td></tr>`;
+});
+}); }
+
+// --- SUPPLIERS ---
+window.openSupplier=()=>{
+modal.style.display="flex";
+modalBody.innerHTML=`<h3>Add Supplier</h3>
+<input id="sname" placeholder="Supplier Name">
+<input id="semail" placeholder="Email">
+<input id="sphone" placeholder="Phone">
+<button onclick="saveSupplier()">Save</button>`;
+};
+window.saveSupplier=async()=>{ await addDoc(collection(db,"suppliers"),{name:sname.value,email:semail.value,phone:sphone.value}); modal.style.display="none"; };
+function renderSuppliers(){ onSnapshot(collection(db,"suppliers"),snap=>{
+supplierTable.innerHTML=`<tr><th>Name</th><th>Email</th><th>Phone</th></tr>`;
+snap.forEach(d=>{ const s=d.data(); supplierTable.innerHTML+=`<tr><td>${s.name}</td><td>${s.email}</td><td>${s.phone}</td></tr>`; });
+}); }
+
+// --- FEEDBACK ---
+function renderFeedback(){ onSnapshot(collection(db,"feedback"),snap=>{
+feedbackTable.innerHTML=`<tr><th>Customer</th><th>Message</th><th>Time</th></tr>`;
+snap.forEach(d=>{ const f=d.data(); feedbackTable.innerHTML+=`<tr><td>${f.customer}</td><td>${f.message}</td><td>${f.time}</td></tr>`; });
+}); }
+
+// --- DASHBOARD CARDS ---
+function updateDashboardCards(){
+onSnapshot(collection(db, "inventory"), snap => {
+const totalProducts=snap.size;
+const lowStock=snap.docs.filter(d=>d.data().stock<d.data().min).length;
+onSnapshot(collection(db, "orders"), os => {
+const totalOrders=os.size;
+onSnapshot(collection(db, "customers"), cs => {
+const totalCust=cs.size;
+onSnapshot(collection(db, "suppliers"), ss => {
+const totalSup=ss.size;
+onSnapshot(collection(db, "consultations"), ccs => {
+const totalCons=ccs.size;
+dashboardCards.innerHTML=`
+<div class="card">Total Products: ${totalProducts}</div>
+<div class="card">Low Stock: ${lowStock}</div>
+<div class="card">Orders: ${totalOrders}</div>
+<div class="card">Customers: ${totalCust}</div>
+<div class="card">Suppliers: ${totalSup}</div>
+<div class="card">Consultations: ${totalCons}</div>`;
+});});});});});
+}
+
+// --- CHARTS ---
+let stockChartInstance, ordersChartInstance, salesChartInstance;
+function renderCharts() {
+  // --- STOCK CHART ---
+  onSnapshot(collection(db, "inventory"), snap => {
+    const labels = [];
+    const stocks = [];
+    snap.forEach(d => {
+      const i = d.data();
+      labels.push(i.name);
+      stocks.push(i.stock);
+    });
+
+    // Destroy previous chart if exists
+    if (stockChartInstance) stockChartInstance.destroy();
+
+    const ctxStock = document.getElementById("stockChart").getContext("2d");
+    stockChartInstance = new Chart(ctxStock, {
+      type: 'bar',
+      data: {
+        labels: labels,
+        datasets: [{
+          label: 'Stock Levels',
+          data: stocks,
+          backgroundColor: '#22c55e'
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: { legend: { display: true } },
+        scales: { y: { beginAtZero: true } }
+      }
+    });
+  });
+
+  // --- ORDERS CHART ---
+  onSnapshot(collection(db, "orders"), snap => {
+    const labels = [];
+    const qtys = [];
+    snap.forEach(d => {
+      const o = d.data();
+      labels.push(o.product);
+      qtys.push(o.qty);
+    });
+
+    if (ordersChartInstance) ordersChartInstance.destroy();
+
+    const ctxOrders = document.getElementById("ordersChart").getContext("2d");
+    ordersChartInstance = new Chart(ctxOrders, {
+      type: 'line',
+      data: {
+        labels: labels,
+        datasets: [{
+          label: 'Orders',
+          data: qtys,
+          borderColor: '#22c55e',
+          backgroundColor: 'rgba(34,197,94,0.2)',
+          fill: true,
+          tension: 0.3
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: { legend: { display: true } },
+        scales: { y: { beginAtZero: true } }
+      }
+    });
+  });
+
+  // --- SALES HISTORY CHART ---
+  onSnapshot(collection(db, "orders"), snap => {
+    const salesData = {};
+    snap.forEach(d => {
+      const o = d.data();
+      salesData[o.product] = (salesData[o.product] || 0) + o.qty;
+    });
+
+    const labels = Object.keys(salesData);
+    const data = Object.values(salesData);
+
+    if (salesChartInstance) salesChartInstance.destroy();
+
+    const ctxSales = document.getElementById("salesChart").getContext("2d");
+    salesChartInstance = new Chart(ctxSales, {
+      type: 'pie',
+      data: {
+        labels: labels,
+        datasets: [{
+          label: 'Sales History',
+          data: data,
+          backgroundColor: labels.map(() => '#' + Math.floor(Math.random() * 16777215).toString(16))
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: { legend: { position: 'right' } }
+      }
+    });
+  });
+}
+
+// --- EXPORT REPORTS ---
+window.exportExcel=()=>{
+let wb=XLSX.utils.book_new();
+let ws_data=[["Customer","Product","Qty","Time"]];
+onSnapshot(collection(db,"orders"),snap=>{ snap.forEach(d=>{ const o=d.data(); ws_data.push([o.customer,o.product,o.qty,o.time]); });
+let ws=XLSX.utils.aoa_to_sheet(ws_data);
+XLSX.utils.book_append_sheet(wb,ws,"Orders");
+XLSX.writeFile(wb,"Orders_Report.xlsx");
+});
+};
+
+window.exportPDF=()=>{
+import("https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js").then(jsPDF=>{
+const { jsPDF: JSPDF }=jsPDF;
+const doc=new JSPDF();
+doc.text("Orders Report",10,10);
+let y=20;
+onSnapshot(collection(db,"orders"),snap=>{ snap.forEach(d=>{ const o=d.data(); doc.text(`${o.customer} | ${o.product} | ${o.qty} | ${o.time}`,10,y); y+=10; });
+doc.save("Orders_Report.pdf");
+});
+});
+};
+// LOGS
+let logs = [];
+
+function renderLogs(){
+  onSnapshot(collection(db,"logs"), snap=>{
+    logs = [];
+    logsBody.innerHTML = "";
+
+    snap.forEach(d=>{
+      let l = d.data();
+      logs.push(l);
+
+      logsBody.innerHTML += `
+      <tr>
+        <td>${l.user || "Unknown"}</td>
+        <td>${l.action}</td>
+        <td>${l.details || "-"}</td>
+        <td>${l.time}</td>
+      </tr>`;
+    });
+  });
+}
+
+// FILTER
+window.filterLogs = ()=>{
+  let q = logSearch.value.toLowerCase();
+  logsBody.innerHTML = "";
+
+  logs
+    .filter(l =>
+      (l.user && l.user.toLowerCase().includes(q)) ||
+      (l.action && l.action.toLowerCase().includes(q)) ||
+      (l.details && l.details.toLowerCase().includes(q))
+    )
+    .forEach(l=>{
+      logsBody.innerHTML += `
+      <tr>
+        <td>${l.user || "Unknown"}</td>
+        <td>${l.action}</td>
+        <td>${l.details || "-"}</td>
+        <td>${l.time}</td>
+      </tr>`;
+    });
+};
+// --- LOAD ALL ---
+function loadAll(){
+renderInv(); renderOrders(); renderCustomers(); renderConsults(); renderSuppliers(); renderFeedback(); updateDashboardCards(); renderCharts(); renderSales(); renderLogs();
+}
+
+// --- MODAL CLOSE ---
+window.onclick=function(e){ if(e.target==modal) modal.style.display="none"; }
+</script>
+
+</body>
+</html>

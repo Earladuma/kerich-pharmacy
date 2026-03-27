@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kerich Pharmacy</title>
+<link rel="icon" href="data:,">
+<style>
+body{font-family:system-ui;margin:0;background:#f3f4f6;}
+.nav{display:flex;justify-content:space-between;align-items:center;padding:15px 25px;background:#16a34a;color:white;position:sticky;top:0;}
+.nav h3{margin:0;cursor:pointer;}
+.nav a{margin-left:10px;cursor:pointer;color:white;text-decoration:none;}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:15px;padding:15px;}
+.card{background:white;padding:15px;border-radius:10px;box-shadow:0 5px 20px rgba(0,0,0,0.05);}
+.price{color:#16a34a;font-weight:bold;}
+.qty{display:flex;gap:5px;margin:5px 0;}
+.cart{position:fixed;right:-350px;top:0;width:320px;height:100%;background:white;padding:20px;transition:.3s;overflow:auto;z-index:999;}
+.cart.open{right:0;}
+.fab{position:fixed;bottom:20px;right:20px;background:#16a34a;color:white;padding:15px;border-radius:50px;cursor:pointer;z-index:1000;}
+.badge{position:absolute;background:red;color:white;border-radius:50%;padding:3px 7px;font-size:12px;top:-5px;right:-5px;}
+.modal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.5);display:none;justify-content:center;align-items:center;z-index:1001;}
+.modal.open{display:flex;}
+.modal-content{background:white;padding:20px;border-radius:10px;width:300px;}
+.top-actions{display:flex;gap:5px;margin-bottom:10px;}
+.top-actions button{flex:1;padding:8px;border:none;border-radius:5px;color:white;}
+.call{background:#2563eb;}
+.whatsapp{background:#25D366;}
+</style>
+</head>
+<body>
+
+<div class="nav">
+  <h3 onclick="goHome()">Kerich Pharmacy</h3>
+  <div>
+    <a href="consultations.html">Consultations</a>
+    <span id="welcome"></span>
+    <input id="search" placeholder="Search..." oninput="searchProducts()">
+    <a onclick="showLogin()" id="loginLink">Login</a>
+    <a onclick="showRegister()" id="registerLink">Register</a>
+    <a onclick="logout()" id="logoutLink" style="display:none;">Logout</a>
+  </div>
+</div>
+
+<script>
+function goHome(){ window.location.href = "index.html"; }
+</script>
+
+<div class="grid" id="grid"></div>
+
+<!-- CART -->
+<div class="cart" id="cart">
+  <div class="top-actions">
+    <button class="call" onclick="callNow()">Call</button>
+    <button class="whatsapp" onclick="whatsappNow()">WhatsApp</button>
+  </div>
+  <button onclick="toggleCart()">⬅ Back</button>
+  <h3>Cart</h3>
+  <div id="cartItems"></div>
+  <p>Total: KES <span id="total">0</span></p>
+  <input id="phone" placeholder="Phone 2547...">
+  <button onclick="placeOrder()">Checkout</button>
+</div>
+
+<div class="fab" onclick="toggleCart()">
+  Cart <span id="cartCount" class="badge" style="display:none;">0</span>
+</div>
+
+<!-- LOGIN -->
+<div class="modal" id="loginModal">
+  <div class="modal-content">
+    <h3>Login</h3>
+    <input id="loginEmail" placeholder="Email">
+    <input id="loginPassword" type="password" placeholder="Password">
+    <button onclick="login()">Login</button>
+  </div>
+</div>
+
+<!-- REGISTER -->
+<div class="modal" id="registerModal">
+  <div class="modal-content">
+    <h3>Register</h3>
+    <input id="regName" placeholder="Full Name">
+    <input id="regEmail" placeholder="Email">
+    <input id="regPhone" placeholder="Phone">
+    <input id="regAddress" placeholder="Address">
+    <input id="regPassword" type="password" placeholder="Password">
+    <button onclick="register()">Register</button>
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getFirestore, collection, onSnapshot, addDoc, doc, updateDoc, serverTimestamp, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+const app = initializeApp({
+  apiKey: "AIzaSyATESqDeDuOOLjvEqZ9J8j58M59nQrbnmw",
+  authDomain: "kerichpharma.firebaseapp.com",
+  projectId: "kerichpharma",
+  storageBucket: "kerichpharma.firebasestorage.app",
+  messagingSenderId: "668206751685",
+  appId: "1:668206751685:web:cc097cff689269378375ac",
+  measurementId: "G-QDRBJ6S9PZ"
+});
+
+const db = getFirestore(app);
+
+let medicines = [], cart = [], qtyMap = {}, currentUser = JSON.parse(localStorage.getItem("user")) || null;
+
+/* LOAD PRODUCTS */
+onSnapshot(collection(db,"inventory"), snap => {
+  medicines = [];
+  snap.docs.forEach(d => medicines.push({ id: d.id, ...d.data() }));
+  render(medicines);
+});
+
+/* RENDER */
+function render(list){
+  const grid = document.getElementById("grid");
+  grid.innerHTML = "";
+  list.forEach(m => {
+    grid.innerHTML += `
+      <div class="card">
+        ${m.name}<br>
+        <div class="price">KES ${Math.round(m.price*130)}</div>
+        Stock: ${m.stock}
+        <div class="qty">
+          <button onclick="changeQty('${m.id}',-1)">-</button>
+          <span id="q${m.id}">${qtyMap[m.id]||1}</span>
+          <button onclick="changeQty('${m.id}',1)">+</button>
+        </div>
+        <button onclick="addToCart('${m.id}','${m.name}',${m.price},${m.stock})">Add</button>
+      </div>`;
+  });
+}
+
+/* QTY */
+window.changeQty = (id, d) => {
+  let q = qtyMap[id] || 1;
+  const p = medicines.find(m => m.id === id);
+  q += d;
+  if(q<1) q = 1;
+  if(q>p.stock) q = p.stock;
+  qtyMap[id] = q;
+  document.getElementById("q"+id).innerText = q;
+};
+
+/* ADD CART */
+window.addToCart = (id, name, price, stock) => {
+  if(!currentUser){ alert("Login first"); showLogin(); return; }
+  let q = qtyMap[id] || 1;
+  const e = cart.find(i => i.id === id);
+  if(e){ e.qty += q; } else { cart.push({id, name, price, qty:q}); }
+  updateCart();
+};
+
+/* CART */
+function updateCart(){
+  const box = document.getElementById("cartItems");
+  let total = 0;
+  box.innerHTML = "";
+  cart.forEach((c,i)=>{
+    total += c.price * c.qty;
+    box.innerHTML += `${c.name} x${c.qty} <button onclick="removeItem(${i})">x</button><br>`;
+  });
+  document.getElementById("total").innerText = Math.round(total*130);
+
+  const badge = document.getElementById("cartCount");
+  if(cart.length){
+    badge.style.display = "inline";
+    badge.innerText = cart.length;
+  }else badge.style.display = "none";
+}
+window.removeItem = i => { cart.splice(i,1); updateCart(); };
+window.toggleCart = () => document.getElementById("cart").classList.toggle("open");
+window.searchProducts = () => render(medicines.filter(m => m.name.toLowerCase().includes(document.getElementById("search").value.toLowerCase())));
+
+/* CALL & WHATSAPP */
+window.callNow = () => location.href = "tel:0708632005";
+window.whatsappNow = () => window.open("https://wa.me/254708632005");
+
+/* AUTH */
+function hash(s){ return btoa(s); }
+
+window.register = async () => {
+  const name = document.getElementById("regName").value;
+  const email = document.getElementById("regEmail").value;
+  const phone = document.getElementById("regPhone").value;
+  const address = document.getElementById("regAddress").value;
+  const password = document.getElementById("regPassword").value;
+
+  await addDoc(collection(db,"customers"), {
+    name, email, phone, address, passwordHash: hash(password)
+  });
+  alert("Registered");
+  document.getElementById("registerModal").classList.remove("open");
+};
+
+window.login = async () => {
+  const email = document.getElementById("loginEmail").value;
+  const password = document.getElementById("loginPassword").value;
+
+  const qRef = query(collection(db,"customers"), where("email","==",email));
+  const snap = await getDocs(qRef);
+  if(snap.empty) return alert("User not found");
+
+  const data = snap.docs[0].data();
+  if(data.passwordHash !== hash(password)) return alert("Wrong password");
+
+  currentUser = { id: snap.docs[0].id, ...data };
+  localStorage.setItem("user", JSON.stringify(currentUser));
+  document.getElementById("loginModal").classList.remove("open");
+  updateNav();
+};
+
+window.logout = () => {
+  currentUser = null;
+  localStorage.removeItem("user");
+  updateNav();
+};
+
+window.showLogin = () => document.getElementById("loginModal").classList.add("open");
+window.showRegister = () => document.getElementById("registerModal").classList.add("open");
+
+/* NAV */
+function updateNav(){
+  if(currentUser){
+    document.getElementById("welcome").innerText = "Welcome "+currentUser.name;
+    document.getElementById("loginLink").style.display="none";
+    document.getElementById("registerLink").style.display="none";
+    document.getElementById("logoutLink").style.display="inline";
+    document.getElementById("phone").value = currentUser.phone;
+  } else {
+    document.getElementById("welcome").innerText = "";
+    document.getElementById("loginLink").style.display="inline";
+    document.getElementById("registerLink").style.display="inline";
+    document.getElementById("logoutLink").style.display="none";
+  }
+}
+updateNav();
+
+/* ORDER */
+window.placeOrder = async () => {
+  if(!currentUser){ alert("Login first"); return; }
+  if(cart.length === 0){ alert("Cart empty"); return; }
+
+  const total = cart.reduce((s,i) => s + i.price*i.qty, 0);
+  const phoneVal = document.getElementById("phone").value || currentUser.phone;
+  const productNames = cart.map(i => i.name).join(", ");
+  const totalQty = cart.reduce((s,i) => s + i.qty, 0);
+
+  await addDoc(collection(db,"orders"),{
+    customer:`${currentUser.name}, ${phoneVal}`,
+    phone: phoneVal,
+    product: productNames,
+    qty: totalQty,
+    items: cart,
+    total: total,
+    time: new Date().toLocaleString(),
+    status:"pending",
+    createdAt: serverTimestamp()
+  });
+
+  for(let i of cart){
+    const p = medicines.find(m => m.id === i.id);
+    await updateDoc(doc(db,"inventory",i.id), { stock: p.stock - i.qty });
+  }
+
+  alert("Order placed!");
+  cart = [];
+  updateCart();
+};
+</script>
+
+</body>
+</html>
