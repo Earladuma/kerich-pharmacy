@@ -798,15 +798,8 @@ html, body{
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
 
 <script>
-const firebaseConfig = {
-    apiKey: "AIzaSyATESqDeDuOOLjvEqZ9J8j58M59nQrbnmw",
-  authDomain: "kerichpharma.firebaseapp.com",
-  projectId: "kerichpharma",
-  storageBucket: "kerichpharma.firebasestorage.app",
-  messagingSenderId: "668206751685",
-  appId: "1:668206751685:web:cc097cff689269378375ac",
-  measurementId: "G-QDRBJ6S9PZ"
-};
+  import { firebaseConfig } from "./config.js";
+
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 </script>
