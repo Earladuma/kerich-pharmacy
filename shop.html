@@ -25,19 +25,122 @@ body{font-family:system-ui;margin:0;background:#f3f4f6;}
 .top-actions button{flex:1;padding:8px;border:none;border-radius:5px;color:white;}
 .call{background:#2563eb;}
 .whatsapp{background:#25D366;}
+/* ================= MOBILE MASTER FIX ================= */
+
+/* NAV IMPROVEMENT */
+.nav{
+  flex-wrap:wrap;
+}
+
+.nav-right{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+.menu-btn{
+  display:none;
+  font-size:26px;
+  cursor:pointer;
+}
+
+/* SEARCH FIX */
+#search{
+  padding:8px;
+  border-radius:6px;
+  border:none;
+  outline:none;
+}
+
+/* MOBILE NAV */
+@media(max-width:768px){
+
+  .menu-btn{
+    display:block;
+  }
+
+  .nav-right{
+    width:100%;
+    flex-direction:column;
+    display:none;
+    margin-top:10px;
+    background:#16a34a;
+    padding:10px;
+    border-radius:10px;
+  }
+
+  .nav-right.active{
+    display:flex;
+  }
+
+  #search{
+    width:100%;
+  }
+
+  .nav a{
+    width:100%;
+    text-align:center;
+    padding:8px;
+  }
+}
+
+/* GRID FIX */
+.grid{
+  grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
+}
+
+/* CARD MOBILE */
+@media(max-width:600px){
+  .card{
+    padding:20px;
+  }
+}
+
+/* CART MOBILE */
+@media(max-width:600px){
+  .cart{
+    width:100%;
+  }
+}
+
+/* INPUTS FIX */
+input{
+  width:100%;
+  padding:10px;
+  margin:5px 0;
+  border-radius:8px;
+  border:1px solid #ccc;
+}
+
+/* BUTTONS BETTER TOUCH */
+button{
+  min-height:44px;
+  cursor:pointer;
+}
+
+/* STOP SIDE SCROLL */
+html,body{
+  overflow-x:hidden;
+}
 </style>
 </head>
 <body>
 
 <div class="nav">
   <h3 onclick="goHome()">Kerich Pharmacy</h3>
-  <div>
-    <a href="consultations.html">Consultations</a>
+
+  <div class="menu-btn" onclick="toggleMenu()">☰</div>
+
+  <div class="nav-right">
     <span id="welcome"></span>
+
     <input id="search" placeholder="Search..." oninput="searchProducts()">
+
     <a onclick="showLogin()" id="loginLink">Login</a>
     <a onclick="showRegister()" id="registerLink">Register</a>
     <a onclick="logout()" id="logoutLink" style="display:none;">Logout</a>
+
+    <a href="consultations.html">Consultations</a>
   </div>
 </div>
 
@@ -269,6 +372,12 @@ window.placeOrder = async () => {
   cart = [];
   updateCart();
 };
+
+</script>
+<script>
+function toggleMenu(){
+  document.querySelector(".nav-right").classList.toggle("active");
+}
 </script>
 
 </body>

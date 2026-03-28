@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Kerich Pharmacy</title>
 
 <style>
@@ -639,19 +640,144 @@ input:focus, select:focus, textarea:focus{
     from{opacity:0; transform:translateY(20px);}
     to{opacity:1; transform:translateY(0);}
 }
+/* ================= MOBILE PREMIUM FIX ================= */
+
+/* NAV FIX */
+.nav-links{
+  display:flex;
+  gap:20px;
+}
+
+.menu-btn{
+  display:none;
+  font-size:26px;
+  cursor:pointer;
+}
+
+/* HERO MOBILE */
+@media(max-width:768px){
+  .hero h1{
+    font-size:2rem;
+  }
+
+  .hero p{
+    font-size:1rem;
+  }
+
+  .btn{
+    width:100%;
+  }
+}
+
+/* NAV MOBILE */
+@media(max-width:768px){
+  .menu-btn{
+    display:block;
+  }
+
+  .nav-links{
+    position:absolute;
+    top:70px;
+    left:0;
+    width:100%;
+    background:#020617;
+    flex-direction:column;
+    align-items:center;
+    padding:20px;
+    display:none;
+  }
+
+  .nav-links a{
+    padding:10px 0;
+    font-size:16px;
+  }
+
+  .nav-links.active{
+    display:flex;
+  }
+}
+
+/* ABOUT FIX */
+@media(max-width:768px){
+  .about-text h2{
+    font-size:1.8rem;
+  }
+
+  .stats{
+    flex-direction:column;
+    gap:15px;
+  }
+}
+
+/* TEAM FIX */
+@media(max-width:768px){
+  .team h2{
+    font-size:1.8rem;
+  }
+}
+
+/* CONSULT FORM PREMIUM MOBILE */
+@media(max-width:768px){
+  .consult-ui{
+    padding:25px 20px;
+    border-radius:16px;
+  }
+
+  .field input,
+  .field textarea{
+    font-size:16px;
+  }
+
+  .consult-action{
+    padding:16px;
+    font-size:16px;
+  }
+}
+
+/* REVIEW FIX */
+@media(max-width:768px){
+  .review{
+    min-width:220px;
+  }
+}
+
+/* FOOTER FIX */
+@media(max-width:768px){
+  .footer-container{
+    text-align:center;
+  }
+}
+
+/* GLOBAL MOBILE POLISH */
+button, .btn{
+  min-height:48px;
+}
+
+body{
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* PREVENT SIDE SCROLL */
+html, body{
+  max-width:100%;
+  overflow-x:hidden;
+}
 </style>
 </head>
 <body>
 
 <!-- NAV -->
 <div class="nav">
-<div><b>Kerich Pharmacy</b></div>
-<div>
-<a href="#features">Features and About Us</a>
-<a href="shop.html">Shop</a>
-<a href="#consult">Consultation</a>
-<a href="#contact">Contact</a>
-</div>
+  <div><b>Kerich Pharmacy</b></div>
+
+  <div class="menu-btn" onclick="toggleMenu()">☰</div>
+
+  <div class="nav-links">
+    <a href="#features">Features and About Us</a>
+    <a href="shop.html">Shop</a>
+    <a href="#consult">Consultation</a>
+    <a href="#contact">Contact</a>
+  </div>
 </div>
 
 <!-- HERO -->
@@ -1183,6 +1309,10 @@ fields.forEach(f => {
     }
 });
 </script>
-
+<script>
+function toggleMenu(){
+  document.querySelector(".nav-links").classList.toggle("active");
+}
+</script>
 </body>
 </html>
