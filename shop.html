@@ -315,14 +315,25 @@ function goHome(){ window.location.href = "index.html"; }
 <div class="fab" onclick="toggleCart()">
   Cart <span id="cartCount" class="badge" style="display:none;">0</span>
 </div>
-
 <!-- LOGIN -->
 <div class="modal" id="loginModal">
   <div class="modal-content">
     <h3>Login</h3>
-    <input id="loginEmail" placeholder="Email">
-    <input id="loginPassword" type="password" placeholder="Password">
-    <button onclick="login()">Login</button>
+    <div class="form-group">
+      <input id="loginEmail" type="email" required>
+      <label for="loginEmail">Email</label>
+    </div>
+    <div class="form-group">
+      <input id="loginPassword" type="password" required>
+      <label for="loginPassword">Password</label>
+    </div>
+    <div class="modal-actions">
+      <button class="primary-btn" onclick="login()">Login</button>
+      <button class="secondary-btn" onclick="document.getElementById('loginModal').classList.remove('open')">Back</button>
+    </div>
+    <p class="switch-text">
+      Don't have an account? <span class="link" onclick="showRegister();document.getElementById('loginModal').classList.remove('open')">Register</span>
+    </p>
   </div>
 </div>
 
@@ -330,14 +341,173 @@ function goHome(){ window.location.href = "index.html"; }
 <div class="modal" id="registerModal">
   <div class="modal-content">
     <h3>Register</h3>
-    <input id="regName" placeholder="Full Name">
-    <input id="regEmail" placeholder="Email">
-    <input id="regPhone" placeholder="Phone">
-    <input id="regAddress" placeholder="Address">
-    <input id="regPassword" type="password" placeholder="Password">
-    <button onclick="register()">Register</button>
+    <div class="form-group">
+      <input id="regName" required>
+      <label for="regName">Full Name</label>
+    </div>
+    <div class="form-group">
+      <input id="regEmail" type="email" required>
+      <label for="regEmail">Email</label>
+    </div>
+    <div class="form-group">
+      <input id="regPhone" required>
+      <label for="regPhone">Phone</label>
+    </div>
+    <div class="form-group">
+      <input id="regAddress" required>
+      <label for="regAddress">Address</label>
+    </div>
+    <div class="form-group">
+      <input id="regPassword" type="password" required>
+      <label for="regPassword">Password</label>
+    </div>
+    <div class="modal-actions">
+      <button class="primary-btn" onclick="register()">Register</button>
+      <button class="secondary-btn" onclick="document.getElementById('registerModal').classList.remove('open')">Back</button>
+    </div>
+    <p class="switch-text">
+      Already have an account? <span class="link" onclick="showLogin();document.getElementById('registerModal').classList.remove('open')">Login</span>
+    </p>
   </div>
 </div>
+
+<style>
+/* --- Modal Container --- */
+.modal{
+  position:fixed;
+  top:0;left:0;
+  width:100%;height:100%;
+  background:rgba(0,0,0,0.6);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  z-index:2000;
+  opacity:0;
+  pointer-events:none;
+  transition: opacity 0.3s ease;
+}
+.modal.open{
+  opacity:1;
+  pointer-events:auto;
+}
+
+/* --- Modal Content --- */
+.modal-content{
+  background:white;
+  padding:30px 25px;
+  border-radius:20px;
+  width:360px;
+  max-width:90%;
+  box-shadow:0 15px 50px rgba(0,0,0,0.3);
+  transform: translateY(-30px);
+  transition: transform 0.4s ease, opacity 0.4s ease;
+  opacity:0;
+}
+.modal.open .modal-content{
+  transform: translateY(0);
+  opacity:1;
+}
+
+.modal-content h3{
+  text-align:center;
+  color:#16a34a;
+  margin-bottom:25px;
+  font-size:1.8rem;
+  font-weight:bold;
+}
+
+/* --- Floating Labels --- */
+.form-group{
+  position:relative;
+  margin-bottom:18px;
+}
+.form-group input{
+  width:100%;
+  padding:14px 12px 14px 12px;
+  border-radius:10px;
+  border:1px solid #ccc;
+  outline:none;
+  font-size:1rem;
+  transition: border 0.3s, box-shadow 0.3s;
+}
+.form-group input:focus{
+  border-color:#16a34a;
+  box-shadow:0 0 10px rgba(22,163,74,0.3);
+}
+.form-group label{
+  position:absolute;
+  top:50%;
+  left:12px;
+  color:#999;
+  font-size:1rem;
+  pointer-events:none;
+  transform: translateY(-50%);
+  transition:0.3s ease all;
+}
+.form-group input:focus + label,
+.form-group input:not(:placeholder-shown) + label{
+  top:-8px;
+  left:10px;
+  font-size:0.8rem;
+  background:white;
+  padding:0 5px;
+  color:#16a34a;
+}
+
+/* --- Buttons --- */
+.modal-actions{
+  display:flex;
+  gap:12px;
+  margin-top:15px;
+}
+.primary-btn{
+  flex:1;
+  background:#16a34a;
+  color:white;
+  border:none;
+  padding:12px 0;
+  border-radius:12px;
+  font-weight:bold;
+  cursor:pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.primary-btn:hover{
+  transform: translateY(-2px);
+  box-shadow:0 8px 18px rgba(22,163,74,0.4);
+}
+.secondary-btn{
+  flex:1;
+  background:#ccc;
+  color:#333;
+  border:none;
+  padding:12px 0;
+  border-radius:12px;
+  font-weight:bold;
+  cursor:pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.secondary-btn:hover{
+  transform: translateY(-2px);
+  box-shadow:0 5px 15px rgba(0,0,0,0.2);
+}
+
+/* --- Links --- */
+.switch-text{
+  text-align:center;
+  margin-top:12px;
+  font-size:14px;
+  color:#555;
+}
+.switch-text .link{
+  color:#16a34a;
+  font-weight:bold;
+  cursor:pointer;
+  transition: text-decoration 0.2s;
+}
+.switch-text .link:hover{
+  text-decoration:underline;
+}
+</style>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
